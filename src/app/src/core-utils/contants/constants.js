@@ -1,0 +1,6 @@
+export const LEARN_DOCKER = "Learn Docker"
+export const LEARN_REACT = "Learn React"
+export const LIST_OF_TODOS = "List of TODOs"
+export const CREATE_TODO = "Create a ToDo"
+export const TODO_HEADING = "ToDo: "
+export const ADD_TODO = "Add ToDo!"

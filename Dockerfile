@@ -9,6 +9,10 @@ RUN apt-get install -y curl nano wget nginx git
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
+# mongo libs issue fix
+RUN echo "deb http://deb.debian.org/debian buster main" >> /etc/apt/sources.list
+RUN apt-get update
+RUN apt-get install -y libssl1.1
 
 # Mongo
 RUN ln -s /bin/echo /bin/systemctl
@@ -21,8 +25,10 @@ RUN apt-get install -y mongodb-org
 RUN apt-get install -y yarn
 
 # Install PIP
-RUN easy_install pip
+# RUN easy_install pip  (not working with python 3.8 base image)
 
+# Install PIP using python3-pip
+RUN apt-get install -y python3-pip
 
 ENV ENV_TYPE staging
 ENV MONGO_HOST mongo

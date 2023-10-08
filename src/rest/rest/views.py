@@ -11,10 +11,34 @@ db = MongoClient(mongo_uri)['test_db']
 class TodoListView(APIView):
 
     def get(self, request):
-        # Implement this method - return all todo items from db instance above.
-        return Response({}, status=status.HTTP_200_OK)
+        
+        todos_pipeline = [
+            {
+                "$project": {
+                    "_id": {"$toString": "$_id"},
+                    "title": 1 
+                }
+            }
+        ]
+
+        try:
+            todos_data = list(db.todos.aggregate(todos_pipeline))
+
+            return Response(todos_data, status=status.HTTP_200_OK, content_type='application/json')
+
+        except Exception as e:
+            logging.error(str(e))
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
         
     def post(self, request):
-        # Implement this method - accept a todo item in a mongo collection, persist it using db instance above.
-        return Response({}, status=status.HTTP_200_OK)
+        try:
+            data = json.loads(request.body)
+            print('data',data)
+            db.todos.insert_one(data)
+            return Response({"message": "Todo item added successfully"}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            logging.error(str(e))
+            return Response({"error": "Failed to add todo item"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
