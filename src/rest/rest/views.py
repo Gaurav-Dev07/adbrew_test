@@ -24,7 +24,7 @@ class TodoListView(APIView):
         try:
             todos_data = list(db.todos.aggregate(todos_pipeline))
 
-            return Response(todos_data, status=status.HTTP_200_OK, content_type='application/json')
+            return Response(todos_data, status=status.HTTP_200_OK)
 
         except Exception as e:
             logging.error(str(e))
@@ -35,7 +35,6 @@ class TodoListView(APIView):
     def post(self, request):
         try:
             data = json.loads(request.body)
-            print('data',data)
             db.todos.insert_one(data)
             return Response({"message": "Todo item added successfully"}, status=status.HTTP_201_CREATED)
         except Exception as e:
