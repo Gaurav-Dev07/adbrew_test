@@ -1,5 +1,6 @@
 from rest.exceptions.custom_exceptions import ItemAlreadyExists
 import logging
+from rest.constants import SUCCESS_MESSAGES,ERROR_MESSAGES
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +24,7 @@ class TodoService:
     def add_todo_item(self, data):
         existing_item = self.db.todos.find_one({"title": data['title']})
         if existing_item:  
-            raise ItemAlreadyExists("This todo item already exists.")
+            raise ItemAlreadyExists(ERROR_MESSAGES["TODO_ITEM_EXISTS_IN_DB"])
         else:
             self.db.todos.insert_one(data)
-            logger.info("Todo item added to the database.")
+            logger.info(SUCCESS_MESSAGES['TODO_ADDED_TO_DB'])
