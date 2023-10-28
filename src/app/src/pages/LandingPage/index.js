@@ -1,39 +1,28 @@
-import React, { useEffect, useState } from "react";
-import TodoForm from "../../components/Todo";
+import React, { useState } from "react";
+import TodoForm from "../../components/TodoForm";
 import { addTodo, getAllTodos } from "../../services/todos";
 import ErrorHandlerWrapper from "../../wrappers/ErrorHandlerWrapper";
-import {
-  LEARN_DOCKER,
-  LEARN_REACT,
-  LIST_OF_TODOS,
-} from "../../core-utils/contants/constants";
+import { useApiData } from "../../customHooks/useApiData";
+import TodosHeader from "../../components/TodosHeader";
 
 const LandingPage = () => {
+  const {
+    data: todos,
+    error: todosError,
+    loading: todosLoading,
+    fetchData,
+  } = useApiData(getAllTodos);
+
   const [todo, setTodo] = useState("");
-  const [allTodos, setAllTodos] = useState([]);
-  const [fetchTodosError, setFetchTodosError] = useState(false);
   const [addTodoError, setAddTodoError] = useState(false);
-
-  const fetchTodos = async () => {
-    try {
-      const todos = await getAllTodos();
-      setAllTodos(todos);
-    } catch (error) {
-      setFetchTodosError(true);
-    }
-  };
-
-  useEffect(() => {
-    fetchTodos();
-  }, []);
 
   const addTodoClick = async () => {
     try {
       await addTodo(todo);
       setTodo("");
-      fetchTodos();
+      fetchData();
     } catch (error) {
-      setAddTodoError(addTodoError);
+      setAddTodoError(true);
     }
   };
 
@@ -45,8 +34,8 @@ const LandingPage = () => {
     return (
       <>
         <div>
-          {allTodos.length > 0 &&
-            allTodos.map((todo) => <li key={todo._id}> {todo.title}</li>)}
+          {todos.length > 0 &&
+            todos.map((todo) => <li key={todo._id}> {todo.title}</li>)}
         </div>
       </>
     );
@@ -66,10 +55,12 @@ const LandingPage = () => {
 
   return (
     <>
-      <h1>{LIST_OF_TODOS}</h1>
-      <li>{LEARN_DOCKER}r</li>
-      <li>{LEARN_REACT}</li>
-      <ErrorHandlerWrapper error={fetchTodosError} render={renderTodoList} />
+      <TodosHeader />
+      <ErrorHandlerWrapper
+        error={todosError}
+        loading={todosLoading}
+        render={renderTodoList}
+      />
       <ErrorHandlerWrapper error={addTodoError} render={renderTodoForm} />
     </>
   );
