@@ -1,34 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import TodoForm from "../../components/TodoForm";
-import { addTodo, getAllTodos } from "../../services/todos";
 import ErrorHandlerWrapper from "../../wrappers/ErrorHandlerWrapper";
-import { useApiData } from "../../customHooks/useApiData";
 import TodosHeader from "../../components/TodosHeader";
+import { useLandingPageState } from "./hooks";
 
 const LandingPage = () => {
   const {
-    data: todos,
-    error: todosError,
-    loading: todosLoading,
-    fetchData,
-  } = useApiData(getAllTodos);
-
-  const [todo, setTodo] = useState("");
-  const [addTodoError, setAddTodoError] = useState(false);
-
-  const addTodoClick = async () => {
-    try {
-      await addTodo(todo);
-      setTodo("");
-      fetchData();
-    } catch (error) {
-      setAddTodoError(true);
-    }
-  };
-
-  const handleTodoChange = (event) => {
-    setTodo(event.target.value);
-  };
+    todo,
+    addTodoError,
+    todos,
+    todosError,
+    todosLoading,
+    handleTodoChange,
+    addTodoClick,
+  } = useLandingPageState()
 
   const renderTodoList = () => {
     return (
